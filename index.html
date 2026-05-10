@@ -83,8 +83,9 @@
         statusDiv.innerText = "Notiser nekade.";
       }
     } catch (err) {
-      console.error("Fel:", err);
-      statusDiv.innerText = "Ett fel uppstod. Kolla konsolen.";
+        // Detta skriver ut exakt vad som går fel på din telefonskärm
+        statusDiv.innerText = "Felmeddelande: " + err.message;
+        console.error(err);
     }
   }
 </script>
