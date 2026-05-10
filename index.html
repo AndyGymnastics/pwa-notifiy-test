@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <title>Min Push PWA</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <style>
+        body { font-family: -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%; max-width: 400px; text-align: center; }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        button { background: #007aff; color: white; border: none; font-weight: bold; cursor: pointer; }
+        #status { font-size: 0.8rem; color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Push-test</h1>
+    <input type="text" id="userName" placeholder="Skriv ditt namn...">
+    <button onclick="saveName()">Spara Namn</button>
+    <hr>
+    <button id="pushBtn" onclick="setupPush()">Aktivera Notiser</button>
+    <div id="status">Status: Väntar...</div>
+</div>
+
+<script>
+    // Vi kollar direkt om vi redan har ett namn sparat.
+    document.getElementById('userName').value = localStorage.getItem('pwaName') || '';
+
+    function saveName() {
+        const name = document.getElementById('userName').value;
+        localStorage.setItem('pwaName', name);
+        alert('Namnet sparat lokalt!');
+    }
+
+    // Registrera Service Worker - motorn i en PWA.
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("Service Worker registrerad!"));
+    }
+
+    async function setupPush() {
+        // Vi nollställer badgen (röda siffran) direkt när man klickar i appen.
+        if ('setAppBadge' in navigator) {
+            navigator.setAppBadge(0);
+        }
+
+        const statusDiv = document.getElementById('status');
+        
+        // iOS kräver att man först kollar Permission-status via det vanliga Notification API:et.
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            statusDiv.innerText = "Status: Du nekade notiser.";
+            return;
+        }
+
+        statusDiv.innerText = "Status: Notiser tillåtna! (Firebase steg nästa)";
+        // Här kommer vi senare lägga in Firebase-logiken för att hämta din Token.
+    }
+</script>
+
+</body>
+</html>
