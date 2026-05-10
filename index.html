@@ -53,31 +53,35 @@
     localStorage.setItem('pwaName', document.getElementById('userName').value);
     alert('Namnet sparat!');
   }
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then((registration) => {
-      messaging.useServiceWorker(registration); // Varför: Ber Firebase använda vår fil
-      console.log("SW registrerad!");
-    });
-  }
+    
+    if ('serviceWorker' in navigator) {
+      // Vi lägger till './' för att säga "leta i den här mappen"
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).then((registration) => {
+        // Vi måste också uttryckligen säga till Firebase vilken registrerad worker den ska använda, för den dummar sig
+        messaging.useServiceWorker(registration); 
+        console.log("SW registrerad på rätt plats!");
+      });
+    }
 
   async function setupPush() {
     const statusDiv = document.getElementById('status');
-    
+    const registration = await navigator.serviceWorker.getRegistration();
+      const currentToken = await messaging.getToken({ 
+        vapidKey: 'BIHVoqhzP8sqRHXPgqTEXkhrMbper-v_2k3nDWbNLYcWmz-H42lk_w8ddchHpAtM54DAOeDnvTBF47gQmX3TOx0',
+        serviceWorkerRegistration: registration // Detta tvingar Firebase att titta i en aktiv worker
+        });   
     try {
       // Varför: iOS kräver att vi nollställer badge vid interaktion för att visa vi har kontroll
       if ('setAppBadge' in navigator) await navigator.setAppBadge(0);
 
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        // 2. Hämta din Token. Ersätt 'DIN_VAPID_NYCKEL' med den du genererade i Firebase.
         const currentToken = await messaging.getToken({ vapidKey: 'BIHVoqhzP8sqRHXPgqTEXkhrMbper-v_2k3nDWbNLYcWmz-H42lk_w8ddchHpAtM54DAOeDnvTBF47gQmX3TOx0' });
         
         if (currentToken) {
           console.log("Din Token:", currentToken);
           statusDiv.innerText = "Klar! Kopiera token i konsolen (F12).";
-          // Tips: I ett skarpt läge skulle vi spara denna token i en databas.
-          // Nu kan du bara kopiera den från webbläsarens konsol för att testa i nästa steg.
+          //  kopiera den från webbläsarens konsol för att testa i nästa steg.
         }
       } else {
         statusDiv.innerText = "Notiser nekade.";
