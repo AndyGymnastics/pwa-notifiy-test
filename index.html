@@ -68,10 +68,9 @@
           vapidKey: 'BIHVoqhzP8sqRHXPgqTEXkhrMbper-v_2k3nDWbNLYcWmz-H42lk_w8ddchHpAtM54DAOeDnvTBF47gQmX3TOx0',
           serviceWorkerRegistration: registration
         });
-        if (currentToken) {
-          console.log("Din Token:", currentToken);
-          statusDiv.innerText = "Klar! Kopiera token i konsolen.";
-        }
+      if (currentToken) {
+         statusDiv.innerText = "Token: " + currentToken;
+      }
       } else {
         statusDiv.innerText = "Notiser nekade.";
       }
