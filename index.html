@@ -49,14 +49,9 @@
     alert('Namnet sparat!');
   }
 
-  let swRegistration = null;
-
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./firebase-messaging-sw.js')
-      .then((registration) => {
-        swRegistration = registration;
-        console.log("Firebase SW registrerad!");
-      })
+      .then(() => console.log("Firebase SW registrerad!"))
       .catch((err) => console.error("SW-fel:", err));
   }
 
@@ -65,11 +60,13 @@
     try {
       if ('setAppBadge' in navigator) await navigator.setAppBadge(0);
 
+      const registration = await navigator.serviceWorker.ready;
+
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         const currentToken = await messaging.getToken({
           vapidKey: 'BIHVoqhzP8sqRHXPgqTEXkhrMbper-v_2k3nDWbNLYcWmz-H42lk_w8ddchHpAtM54DAOeDnvTBF47gQmX3TOx0',
-          serviceWorkerRegistration: swRegistration
+          serviceWorkerRegistration: registration
         });
         if (currentToken) {
           console.log("Din Token:", currentToken);
