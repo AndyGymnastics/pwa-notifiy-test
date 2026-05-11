@@ -3,10 +3,10 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "DIN_API_KEY",
-  projectId: "DITT_PROJEKT",
-  messagingSenderId: "DITT_ID",
-  appId: "DITT_APP_ID"
+  apiKey: "AIzaSyBlF6dpSbScv4MbkJS5Ue8KnoftoWy-iVk",
+  projectId: "minpushapp-52967",
+  messagingSenderId: "907285496319",
+  appId: "1:907285496319:web:f74796cb70ecc9fe2ee7ca"
 });
 
 const messaging = firebase.messaging();
